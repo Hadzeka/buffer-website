@@ -1,0 +1,157 @@
+/* 1. Подключение шрифта (должно быть первым) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,700;14..32,800&display=swap');
+
+/* 2. Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. Базовые стили и кросс-браузерная нормализация */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Учитываем высоту фиксированного меню при скролле */
+    scroll-padding-top: 70px;
+    scroll-behavior: smooth;
+  }
+
+  /* Отключаем плавный скролл для тех, кто предпочитает без анимации */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-anchor: none; /* предотвращает «прилипание» при скролле */
+  }
+
+  /* Каждый элемент с id получает отступ для якорной навигации */
+  *[id] {
+    scroll-margin-top: 70px;
+  }
+
+  /* Медиа-элементы */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Формы и кнопки наследуют шрифт */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Доступность: фокус только с клавиатуры */
+  :focus-visible {
+    outline: 2px solid #a9a9a9;
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Кастомный скроллбар для Webkit */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #555 #1a1a1a;
+  }
+}
+
+/* 4. Утилиты для совместимости */
+@layer utilities {
+  .no-stretch {
+    width: 100%;
+    height: auto;
+  }
+  .gradient-fix {
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+  }
+}
+
+/* 5. Паттерн фона (работает везде) */
+.bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='%23A9A9A9' fill-opacity='0.08' d='M0 0 L20 20 L40 0 L40 40 L20 20 L0 40 Z'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* 6. Анимации (с учётом prefers-reduced-motion) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  [class*="animate-"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}

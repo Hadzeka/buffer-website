@@ -1,0 +1,22 @@
+# Зависимости
+node_modules/
+server/node_modules/
+
+# Переменные окружения (секреты)
+.env
+server/.env
+
+# Загруженные файлы (не храним в git)
+server/uploads/
+
+# Логи
+*.log
+npm-debug.log*
+
+# Файлы сборки
+dist/
+*.local
+
+# IDE
+.vscode/
+.idea/
