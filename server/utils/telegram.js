@@ -11,7 +11,7 @@ const sendTelegramMessage = async (text) => {
   let chatId = process.env.TELEGRAM_CHAT_ID;
 
   if (!token || !chatId) {
-    console.error('❌ TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы в .env');
+    console.error('TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы в .env');
     return false;
   }
 
@@ -31,14 +31,14 @@ const sendTelegramMessage = async (text) => {
   try {
     const response = await axios.post(url, payload);
     if (response.data && response.data.ok) {
-      console.log('✅ Уведомление в Telegram отправлено');
+      console.log('Уведомление в Telegram отправлено');
       return true;
     } else {
-      console.error('❌ Telegram вернул ошибку:', response.data);
+      console.error('Telegram вернул ошибку:', response.data);
       return false;
     }
   } catch (err) {
-    console.error('❌ Ошибка отправки в Telegram:', err.message);
+    console.error('Ошибка отправки в Telegram:', err.message);
     if (err.response) {
       console.error('   Статус:', err.response.status);
       console.error('   Данные:', err.response.data);
@@ -79,7 +79,7 @@ const sendLeadToTelegram = async (lead) => {
 🕒 Время: ${new Date().toLocaleString()}
   `;
 
-  console.log('📤 Пытаемся отправить заявку в Telegram:', { name: safeName, phone: safePhone });
+  console.log('Пытаемся отправить заявку в Telegram:', { name: safeName, phone: safePhone });
   return await sendTelegramMessage(text);
 };
 

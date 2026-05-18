@@ -7,9 +7,9 @@
 
         <!-- Контакты -->
         <div class="text-center space-y-2">
-          <p class="text-gray-200">+375 44 735-40-67</p>
-          <p class="text-gray-200">info@buffer.by</p>
-          <p class="text-gray-200">Минск/ Минский район</p>
+          <p class="text-gray-200">+375 29 397-25-30</p>
+          <p class="text-gray-200">bufer.by@gmail.com</p>
+          <p class="text-gray-200">Минск/Минский район</p>
         </div>
 
         <!-- Соцсети -->
@@ -22,7 +22,7 @@
 
       <!-- Копирайт -->
       <div class="text-center text-gray-400 text-sm mt-6 pt-4 border-t border-white/10">
-        © BUFER: 2026 | УНП 1234567890
+        © BUFER: 2026
       </div>
     </div>
   </footer>

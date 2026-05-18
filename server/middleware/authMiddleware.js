@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const pool = require('../db');
+const adminModel = require('../models/adminModel');
 
 const protect = async (req, res, next) => {
   let token;
@@ -7,11 +7,17 @@ const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const result = await pool.query('SELECT id, name, email, "isAdmin" FROM users WHERE id = $1', [decoded.userId]);
-      req.user = result.rows[0];
-      if (!req.user) return res.status(401).json({ message: 'Не авторизован' });
+      
+      // Ищем админа по id из токена (ключ adminId, а не userId)
+      const admin = await adminModel.findAdminById(decoded.adminId);
+      if (!admin) {
+        return res.status(401).json({ message: 'Не авторизован' });
+      }
+      // Добавляем isAdmin для совместимости со старой проверкой
+      req.user = { ...admin, isAdmin: true };
       next();
     } catch (error) {
+      console.error(error);
       res.status(401).json({ message: 'Неверный токен' });
     }
   }

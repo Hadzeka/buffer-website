@@ -12,9 +12,9 @@ const pool = new Pool({
 // Проверка подключения
 pool.connect((err, client, release) => {
   if (err) {
-    console.error('❌ Ошибка подключения к PostgreSQL:', err.stack);
+    console.error('Ошибка подключения к PostgreSQL:', err.stack);
   } else {
-    console.log('✅ Подключение к PostgreSQL установлено');
+    console.log('Подключение к PostgreSQL установлено');
     release();
   }
 });

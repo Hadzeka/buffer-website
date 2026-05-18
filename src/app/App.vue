@@ -22,8 +22,11 @@
           <button @click="scrollTo('about')" class="text-gray-200 hover:text-white transition-transform duration-200 hover:scale-105 text-sm lg:text-base whitespace-nowrap">О компании</button>
           <button @click="scrollTo('contacts')" class="text-gray-200 hover:text-white transition-transform duration-200 hover:scale-105 text-sm lg:text-base whitespace-nowrap">Контакты</button>
         </div>
+        <!-- Телефон – теперь ссылка заменена на кнопку, открывающую модалку -->
         <div class="hidden md:block text-white font-medium whitespace-nowrap text-sm lg:text-base">
-          <a href="tel:+375447354067" class="hover:text-[#A9A9A9] transition">A1 +375 44 735-40-67</a>
+          <button @click="showPhoneModal = true" class="hover:text-[#A9A9A9] transition">
+             A1 +375 29 397-25-30
+          </button>
         </div>
         <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-white focus:outline-none">
           <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -46,12 +49,15 @@
         <button @click="scrollToAndClose('about')" class="text-gray-200 hover:text-white block w-full text-left py-2">О компании</button>
         <button @click="scrollToAndClose('contacts')" class="text-gray-200 hover:text-white block w-full text-left py-2">Контакты</button>
         <div class="pt-2 border-t border-white/10">
-          <a href="tel:+375447354067" class="text-gray-200 hover:text-white block">A1 +375 44 735-40-67</a>
+          <!-- Мобильная версия – тоже кнопка -->
+          <button @click="showPhoneModal = true" class="text-gray-200 hover:text-white block w-full text-left">
+            📞 A1 +375 29 397-25-30
+          </button>
         </div>
       </div>
     </nav>
 
-     <main class="pt-16">
+    <main class="pt-16">
       <section id="home"><HomePage @scroll-to-catalog="() => scrollTo('catalog')" /></section>
       <section id="catalog"><CatalogPage /></section>
       <section id="about"><AboutPage /></section>
@@ -62,10 +68,15 @@
     <AdminModal v-if="adminMode" @close="adminMode = false" />
     <LoginModal v-if="showLoginModal" @close="showLoginModal = false" @success="onLoginSuccess" />
     <ProductModal v-if="selectedProduct" :product="selectedProduct" @close="selectedProduct = null" />
-  </div>
+    <!-- Модальное окно с телефоном -->
+    <PhoneModal v-if="showPhoneModal" @close="showPhoneModal = false" />
+    <ConfirmModal ref="confirmModalRef" />
+ <ToastContainer />
+ </div>
 </template>
 
 <script setup>
+import ToastContainer from '../widgets/ToastContainer.vue'
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useProductsStore } from '../entities/product/model/productsStore'
 import { useAuthStore } from '../entities/auth/model/authStore'
@@ -77,7 +88,11 @@ import Footer from '../widgets/Footer.vue'
 import AdminModal from '../widgets/AdminModal.vue'
 import LoginModal from '../widgets/LoginModal.vue'
 import ProductModal from '../widgets/ProductModal.vue'
+import PhoneModal from '../widgets/PhoneModal.vue'
+import ConfirmModal from '../widgets/ConfirmModal.vue'
+import { useConfirm } from '../shared/composables/useConfirm'
 
+const showPhoneModal = ref(false)
 const adminMode = ref(false)
 const selectedProduct = ref(null)
 const showLoginModal = ref(false)
@@ -87,6 +102,9 @@ const authStore = useAuthStore()
 
 const mobileMenuOpen = ref(false)
 const mobileCatalogOpen = ref(false)
+
+const confirmModalRef = ref(null)
+const { setConfirmModalRef } = useConfirm()
 
 // Текущая видимая секция
 const currentSection = ref('home')
@@ -129,7 +147,7 @@ const setupObserver = () => {
   elements.forEach(el => observer.observe(el))
 }
 
-// Категории и методы без изменений
+// Категории
 const categories = [
   { name: 'Навесы', slug: 'canopies' },
   { name: 'Дровницы (большие)', slug: 'woodshed-large' },
@@ -192,6 +210,9 @@ onMounted(() => {
   window.addEventListener('open-product-modal', (e) => {
     selectedProduct.value = e.detail
   })
+
+  // Устанавливаем ссылку на компонент ConfirmModal после монтирования
+  setConfirmModalRef(confirmModalRef.value)
   
   authStore.checkAuth()
   
@@ -215,7 +236,6 @@ onMounted(() => {
     })
   }
 
-  // Запускаем наблюдатель после того, как DOM отрендерился
   setTimeout(() => {
     setupObserver()
   }, 100)

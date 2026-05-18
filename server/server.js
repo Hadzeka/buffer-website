@@ -31,18 +31,20 @@ app.get('/api/db-test', async (req, res) => {
   }
 });
 
+// Импорт маршрутов
 const uploadRoutes = require('./routes/uploadRoutes');
-app.use('/api/upload', uploadRoutes);
-
 const productRoutes = require('./routes/productRoutes');
-app.use('/api/products', productRoutes);
-
 const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
-
 const leadRoutes = require('./routes/leadRoutes');
+const adminRoutes = require('./routes/adminRoutes');  // импорт adminRoutes
+
+// Подключение маршрутов
+app.use('/api/upload', uploadRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
+app.use('/api/admin', adminRoutes);   // теперь adminRoutes определён
 
 app.listen(PORT, () => {
-  console.log(`✅ Сервер запущен на порту ${PORT}`);
+  console.log(`Сервер запущен на порту ${PORT}`);
 });

@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-[#2a2b30] py-12 min-h-screen">
+  <div class="bg-[#1e1e1e] py-12 min-h-screen">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8">
+      <div class="bg-[#1e1e1e] rounded-xl shadow-2xl p-6 md:p-8 border border-white/10">
         <h2 class="text-3xl font-bold text-white mb-6">Управление товарами</h2>
 
         <!-- Форма добавления / редактирования -->
-        <div class="mb-10 p-6 bg-gray-700 rounded-lg">
+        <div class="mb-10 p-6 bg-[#1e1e1e] rounded-lg border border-white/10">
           <h3 class="text-xl font-semibold text-white mb-4">
             {{ editingId ? 'Редактировать товар' : 'Добавить новый товар' }}
           </h3>
@@ -13,45 +13,46 @@
             <div>
               <label class="block text-gray-300 mb-1">Название *</label>
               <input v-model="form.name" type="text"
-                     class="w-full p-2 rounded bg-gray-600 text-white border border-gray-500 focus:border-blue-500 focus:outline-none"
+                     class="w-full p-2 rounded bg-[#2a2a2a] text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                      placeholder="Например: Навес из металла" />
             </div>
             <div>
-              <label class="block text-gray-300 mb-1">Цена * (₽)</label>
+              <label class="block text-gray-300 mb-1">Цена * (BYN)</label>
               <input v-model="form.price" type="number"
-                     class="w-full p-2 rounded bg-gray-600 text-white border border-gray-500 focus:border-blue-500 focus:outline-none"
+                     class="w-full p-2 rounded bg-[#2a2a2a] text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                      placeholder="1000" />
             </div>
             <div class="md:col-span-2">
               <label class="block text-gray-300 mb-1">Категория *</label>
               <select v-model="form.categorySlug"
-                      class="w-full p-2 rounded bg-gray-600 text-white border border-gray-500 focus:border-blue-500 focus:outline-none">
+                      class="w-full p-2 rounded bg-[#2a2a2a] text-white border border-gray-600 focus:border-blue-500 focus:outline-none">
                 <option v-for="cat in categories" :key="cat.slug" :value="cat.slug">{{ cat.name }}</option>
               </select>
             </div>
             <div class="md:col-span-2">
               <label class="block text-gray-300 mb-1">Описание</label>
               <textarea v-model="form.description" rows="2"
-                        class="w-full p-2 rounded bg-gray-600 text-white border border-gray-500 focus:border-blue-500 focus:outline-none"
+                        class="w-full p-2 rounded bg-[#2a2a2a] text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
                         placeholder="Краткое описание товара"></textarea>
             </div>
             <div class="md:col-span-2">
               <label class="block text-gray-300 mb-1">Изображение товара</label>
               <input type="file" @change="handleFileUpload" accept="image/*"
-                     class="w-full p-2 rounded bg-gray-600 text-white border border-gray-500" />
+                     class="w-full p-2 rounded bg-[#2a2a2a] text-white border border-gray-600" />
               <div v-if="uploading" class="text-gray-400 text-sm mt-1">Загрузка...</div>
               <div class="mt-2">
-                <img :src="form.image" class="h-24 w-auto object-contain rounded" alt="Предпросмотр" @error="handleImageError" />
+                <img :src="form.image" class="h-24 w-auto object-contain rounded cursor-pointer"
+                     alt="Предпросмотр" @click="openImageModal" @error="handleImageError" />
               </div>
             </div>
           </div>
           <div class="flex gap-3 mt-6">
             <button @click="saveProduct"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition">
+                    class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded transition">
               {{ editingId ? 'Сохранить изменения' : 'Добавить товар' }}
             </button>
             <button v-if="editingId" @click="cancelEdit"
-                    class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded transition">
+                    class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded transition">
               Отмена
             </button>
           </div>
@@ -63,8 +64,8 @@
             Существующие товары ({{ productsStore.products.length }})
           </h3>
           <div class="overflow-x-auto">
-            <table class="min-w-full bg-gray-700 rounded-lg overflow-hidden">
-              <thead class="bg-gray-600">
+            <table class="min-w-full bg-[#1e1e1e] rounded-lg overflow-hidden border border-white/10">
+              <thead class="bg-[#2a2a2a]">
                 <tr>
                   <th class="px-4 py-2 text-left text-white">Фото</th>
                   <th class="px-4 py-2 text-left text-white">Название</th>
@@ -73,21 +74,21 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="product in productsStore.products" :key="product.id" class="border-b border-gray-600">
+                <tr v-for="product in productsStore.products" :key="product.id" class="border-b border-gray-700 hover:bg-white/5">
                   <td class="px-4 py-2">
-                    <img :src="product.image" class="h-12 w-12 object-cover rounded"
-                         @error="e => e.target.src='https://via.placeholder.com/300'" />
+                    <img :src="product.image" class="h-12 w-12 object-cover rounded cursor-pointer"
+                         @click="openTableImageModal(product.image)" @error="e => e.target.src='https://via.placeholder.com/300'" />
                   </td>
                   <td class="px-4 py-2 text-white">{{ product.name }}</td>
-                  <td class="px-4 py-2 text-white">{{ product.price }} ₽</td>
-                  <td class="px-4 py-2 text-center">
+                  <td class="px-4 py-2 text-white">{{ product.price }} BYN</td>
+                  <td class="px-4 py-2 text-center space-x-2">
                     <button @click="editProduct(product)"
-                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded mr-2 transition">
-                      ✏️
+                            class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition">
+                      Редактировать
                     </button>
                     <button @click="deleteProduct(product.id)"
-                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition">
-                      🗑️
+                            class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition">
+                      Удалить
                     </button>
                   </td>
                 </tr>
@@ -102,6 +103,8 @@
         </div>
       </div>
     </div>
+
+    <ImageModal v-if="imageModalVisible" :image-url="modalImageUrl" @close="closeImageModal" />
   </div>
 </template>
 
@@ -109,11 +112,40 @@
 import { ref, reactive } from 'vue'
 import { useProductsStore } from '../../../entities/product/model/productsStore'
 import api from '../../../services/api'
+import ImageModal from '../../../widgets/ImageModal.vue'
+import { useToast } from '../../../shared/composables/useToast'
+import { useConfirm } from '../../../shared/composables/useConfirm'
+
+const { success, error: toastError } = useToast()
+const { confirm } = useConfirm()
 
 const productsStore = useProductsStore()
 const uploading = ref(false)
 
-// Список категорий (дублируем из App.vue, можно вынести в shared)
+// Модальное окно картинки
+const imageModalVisible = ref(false)
+const modalImageUrl = ref('')
+
+const openImageModal = () => {
+  if (form.image && form.image !== 'https://via.placeholder.com/300') {
+    modalImageUrl.value = form.image
+    imageModalVisible.value = true
+  }
+}
+
+const openTableImageModal = (url) => {
+  if (url && url !== 'https://via.placeholder.com/300') {
+    modalImageUrl.value = url
+    imageModalVisible.value = true
+  }
+}
+
+const closeImageModal = () => {
+  imageModalVisible.value = false
+  modalImageUrl.value = ''
+}
+
+// Категории
 const categories = [
   { name: 'Навесы', slug: 'canopies' },
   { name: 'Дровницы (большие)', slug: 'woodshed-large' },
@@ -127,7 +159,6 @@ const categories = [
   { name: 'Качели', slug: 'swings' }
 ]
 
-// Форма
 const form = reactive({
   name: '',
   description: '',
@@ -158,10 +189,10 @@ const handleFileUpload = async (event) => {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     form.image = res.data.imageUrl
-    alert('Изображение загружено!')
+    success('Изображение загружено!')
   } catch (err) {
     console.error(err)
-    alert('Ошибка загрузки изображения')
+    toastError('Ошибка загрузки изображения')
   } finally {
     uploading.value = false
   }
@@ -169,15 +200,15 @@ const handleFileUpload = async (event) => {
 
 const saveProduct = async () => {
   if (!form.name.trim()) {
-    alert('Введите название товара')
+    toastError('Введите название товара')
     return
   }
   if (!form.price || isNaN(form.price) || Number(form.price) <= 0) {
-    alert('Введите корректную цену')
+    toastError('Введите корректную цену')
     return
   }
   if (!form.categorySlug) {
-    alert('Выберите категорию')
+    toastError('Выберите категорию')
     return
   }
 
@@ -192,14 +223,14 @@ const saveProduct = async () => {
   try {
     if (editingId.value) {
       await productsStore.updateProduct(editingId.value, productData)
-      alert('Товар обновлён!')
+      success('Товар обновлён!')
     } else {
       await productsStore.createProduct(productData)
-      alert('Товар добавлен!')
+      success('Товар добавлен!')
     }
     resetForm()
   } catch (err) {
-    alert('Ошибка: ' + (err.response?.data?.message || err.message))
+    toastError('Ошибка: ' + (err.response?.data?.message || err.message))
   }
 }
 
@@ -210,23 +241,28 @@ const editProduct = (product) => {
   form.price = product.price
   form.categorySlug = product.categorySlug
   form.image = product.image
-  document.querySelector('.bg-gray-700').scrollIntoView({ behavior: 'smooth' })
+  document.querySelector('.bg-[#2a2b30]').scrollIntoView({ behavior: 'smooth' })
 }
 
 const cancelEdit = () => resetForm()
 
 const deleteProduct = async (id) => {
-  if (confirm('Удалить товар навсегда?')) {
+  const isConfirmed = await confirm({
+    title: 'Удалить товар',
+    message: 'Вы уверены, что хотите удалить этот товар навсегда? Это действие нельзя отменить.',
+  })
+  if (isConfirmed) {
     try {
       await productsStore.deleteProduct(id)
       if (editingId.value === id) cancelEdit()
+      success('Товар удалён')
     } catch (err) {
-      alert('Ошибка удаления: ' + (err.response?.data?.message || err.message))
+      toastError('Ошибка удаления: ' + (err.response?.data?.message || err.message))
     }
   }
 }
 
 const handleImageError = (e) => {
-  e.target.src = 'https://via.placeholder.com/300'
+  e.target.src = '/images/placeholder.jpg'
 }
 </script>
